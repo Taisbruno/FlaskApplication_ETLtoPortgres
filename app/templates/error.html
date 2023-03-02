@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Erro</title>
+  </head>
+  <body>
+    <a href="{{ url_for('database_controller.upload_file') }}">Voltar</a><br>
+    <h3>Ocorreu um erro</h3>
+    {% if error_message %}
+    <p>{{ error_message }}</p>
+    {% else %}
+    <p>Por favor, tente novamente mais tarde.</p>
+    {% endif %}
+  </body>
+</html>
