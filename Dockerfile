@@ -10,9 +10,8 @@ COPY . /app
 # Install dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
-ENV FLASK_ENV="docker"
-
 EXPOSE 5000
 
-CMD ["python", "src/main.py"]
+ENTRYPOINT [ "python" ]
+CMD [ "app/app.py" ]
 

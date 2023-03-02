@@ -1,8 +1,9 @@
 import pandas as pd
-from repository.database_repository import DbRepository
+from repository.data_repository import DbRepository
 import os
 from dotenv import load_dotenv
 from pycpfcnpj import cpfcnpj
+import logging
 
 load_dotenv()
 
@@ -13,10 +14,13 @@ db_config = {
     'password': os.getenv('DATABASE_PASSWORD')
 }
 
-class DatabaseService:
+class DataService:
     def __init__(self):
         self.db_repo = DbRepository(db_config)
         self.db_repo.connect()
+
+        logging.basicConfig(level=logging.DEBUG)
+        self.logger = logging.getLogger()
 
     def manipulate_data(self, filename):
         delimiter = self.get_delimiter(filename)
@@ -28,9 +32,9 @@ class DatabaseService:
                 'cpf', 'private', 'incompleto', 'data da ultima compra', 
                 'ticket medio', 'ticket da ultima compra', 'loja mais frequente', 'loja da ultima compra'
                 ]
-            df = df.applymap(lambda x: str(x).replace(',', '.') if isinstance(x, float) else x)
+            df = df.applymap(lambda x: str(x).replace(',', '.') if isinstance(x, float) and not pd.isna(x) else x)
             self.validate_cpf_cnpj(df)
-            print(df)
+            self.logger.debug(df)
             return df
         except pd.errors.ParserError:
             raise ValueError('Error parsing file')
@@ -46,12 +50,15 @@ class DatabaseService:
     
     def validate_cpf_cnpj(self, df):
         for i, row in df.iterrows():
-            cpf = row['cpf']
-            cnpj = row['loja da ultima compra']
-            if not cpfcnpj.validate(cpf):
-                raise ValueError(f"Invalid CPF on row {i+1}")
-            elif cnpj != 'nan' and not cpfcnpj.validate(cnpj):
-                raise ValueError(f"Invalid CNPJ on row {i+1}")
+            cpf = str(row['cpf'])
+            cnpj = str(row['loja da ultima compra'])
+            try:
+                if not cpfcnpj.validate(cpf):
+                    self.logger.warning(f"Invalid CPF on row {i+1}")
+                if cnpj != 'nan' and not cpfcnpj.validate(cnpj):
+                    self.logger.warning(f"Invalid CNPJ on row {i+1}")
+            except Exception as e:
+                self.logger.warning(f"Error validating row {i+1}: {str(e)}")
                 
     def allowed_file(self, filename):
         return '.' in filename and \
