@@ -8,6 +8,7 @@ Aplicação Flask que recebe um arquivo no formato .txt ou .csv (a exemplo do ba
 - Pandas
 - Flask
 - PostgreSQL
+- Docker
 
 ## Instalação
 
