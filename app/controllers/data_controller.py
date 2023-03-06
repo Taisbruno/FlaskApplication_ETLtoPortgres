@@ -21,7 +21,7 @@ def upload_file():
         
     return render_template('index.html')
     
-@data_controller.route('/upload', methods=['GET', 'POST']) # Rota para a página de sucesso
+@data_controller.route('/upload', methods=['GET']) # Rota para a página de sucesso
 def get_file():
     return render_template('sent.html')
 
