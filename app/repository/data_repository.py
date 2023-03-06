@@ -1,4 +1,5 @@
 import psycopg2
+import psycopg2.extras
 
 class DbRepository: 
     def __init__(self, db_config): 
@@ -36,19 +37,11 @@ class DbRepository:
                 ticket_ultima_compra,
                 loja_mais_frequente,
                 loja_ultima_compra
-            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+            ) VALUES %s
         """
-        for _, row in data.iterrows():
-            self.cursor.execute(insert_query, (
-                row['cpf'],
-                row['private'],
-                row['incompleto'],
-                row['data da ultima compra'],
-                row['ticket medio'],
-                row['ticket da ultima compra'],
-                row['loja mais frequente'],
-                row['loja da ultima compra']
-            ))
+        values = [(row['cpf'], row['private'], row['incompleto'], row['data da ultima compra'], row['ticket medio'],
+                   row['ticket da ultima compra'], row['loja mais frequente'], row['loja da ultima compra']) for _, row in data.iterrows()]
+        psycopg2.extras.execute_values(self.cursor, insert_query, values)
 
     def drop_table(self): # Método que apaga a tabela do banco, caso a mesma já exista
         drop_table_query = """

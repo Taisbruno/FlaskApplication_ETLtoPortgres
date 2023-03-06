@@ -34,13 +34,7 @@ class DataService:
                 'cpf', 'private', 'incompleto', 'data da ultima compra', 
                 'ticket medio', 'ticket da ultima compra', 'loja mais frequente', 'loja da ultima compra'
                 ]
-            df = df.drop_duplicates(subset=['cpf']) # Remove linhas duplicadas com base na coluna 'cpf'
-            df = df.applymap(lambda x: str(x).lower() if isinstance(x, str) else x) # Converte para minúsculas
-            df = df.applymap(lambda x: unidecode(str(x)) if isinstance(x, str) else x) # Substitui caracteres especiais
-            df['cpf'] = df['cpf'].apply(lambda x: ''.join(filter(str.isdigit, str(x)))) # Formata a coluna 'cpf' para conter apenas dígitos
-            df['data da ultima compra'] = pd.to_datetime(df['data da ultima compra']).dt.strftime('%Y-%m-%d') # Padroniza datas
-            df = df.applymap(lambda x: str(x).replace(',', '.') if isinstance(x, float) and not pd.isna(x) else x) # Troca vírgula por ponto em valores do tipo float e não nulo
-            df = df.where(pd.notnull(df), None) # Substitui valores nulos por None em todas as colunas
+            df = self.clean_data(df) # Limpeza dos dados
             self.validate_cpf_cnpj(df) # Valida CPFs e CNPJs das linhas do dataframe
             self.logger.debug(df)
             return df
@@ -55,6 +49,16 @@ class DataService:
         elif filename.endswith('.txt'):
             return '\s+'
         raise ValueError('Invalid file format. Allowed formats: .csv and .txt')
+    
+    def clean_data(self, df):
+        df = df.drop_duplicates(subset=['cpf']) # Remove linhas duplicadas com base na coluna 'cpf'
+        df = df.applymap(lambda x: str(x).lower() if isinstance(x, str) else x) # Converte para minúsculas
+        df = df.applymap(lambda x: unidecode(str(x)) if isinstance(x, str) else x) # Substitui caracteres especiais
+        df['cpf'] = df['cpf'].apply(lambda x: ''.join(filter(str.isdigit, str(x)))) # Formata a coluna 'cpf' para conter apenas dígitos
+        df['data da ultima compra'] = pd.to_datetime(df['data da ultima compra']).dt.strftime('%Y-%m-%d') # Padroniza datas
+        df = df.applymap(lambda x: str(x).replace(',', '.') if isinstance(x, float) and not pd.isna(x) else x) # Troca vírgula por ponto em valores do tipo float e não nulo
+        df = df.where(pd.notnull(df), None) # Substitui valores nulos por None em todas as colunas
+        return df
     
     def validate_cpf_cnpj(self, df):  # Valida CPFs e CNPJs das linhas do dataframe
         for i, row in df.iterrows():

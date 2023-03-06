@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, redirect, request, url_for
-from services.data_service import DataService
 from werkzeug.utils import secure_filename
+from services.data_service import DataService
 
 data_controller = Blueprint('data_controller', __name__)
 service = DataService()
@@ -15,13 +15,14 @@ def upload_file():
                 file.save(service.get_upload_folder() + filename)
                 df = service.manipulate_data(file.filename) # manipula os dados do arquivo
                 service.insert_data(df) # insere os dados no banco
-                return redirect(url_for('data_controller.download_file'))
+                return redirect(url_for('data_controller.get_file'))
         except Exception as e:
             return redirect(url_for('data_controller.show_error', error=str(e)))
+        
     return render_template('index.html')
     
 @data_controller.route('/upload', methods=['GET', 'POST']) # Rota para a página de sucesso
-def download_file():
+def get_file():
     return render_template('sent.html')
 
 @data_controller.errorhandler(Exception) # Manipulador de erro para a aplicação
