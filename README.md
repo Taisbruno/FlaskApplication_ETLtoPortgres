@@ -18,12 +18,12 @@ Aplicação Flask que recebe um arquivo no formato .txt ou .csv (a exemplo do ba
 
 - Recebe o upload de um arquivo no formato .txt ou .csv
 - Salva o arquivo em questão
-- Processa os dados existentes dentro do arquivo
+- Processa e trata os dados existentes dentro do arquivo
 - Insere as informações no banco de dados PostgreSQL
 
 ## Como usar
 
 1. Clone este repositório
-2. No terminal, navegue até a raiz do projeto e execute o comando: docker-compose up --build
+2. No terminal, navegue até a raiz do projeto e execute o comando: **docker-compose up --build**
 3. Aguarde até que os serviços sejam executados e o aplicativo esteja disponível na porta 5000. Você pode acessar a aplicação em seu navegador em http://localhost:5000
 4. Faça upload do arquivo base_teste.txt ou base_teste.csv
