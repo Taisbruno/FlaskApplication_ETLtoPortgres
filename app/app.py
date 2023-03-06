@@ -1,5 +1,5 @@
 from flask import Flask
-from controllers.data_controller import data_controller # Importando o controller de dados que contém rotas relacionadas
+from controllers.data_controller import data_controller
 
 app = Flask(__name__, template_folder='view')
 

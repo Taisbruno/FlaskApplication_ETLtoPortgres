@@ -6,7 +6,7 @@ from pycpfcnpj import cpfcnpj
 import logging
 from unidecode import unidecode
 
-load_dotenv() # Carrega as variáveis de ambiente do arquivo .env
+load_dotenv()
 
 # Configuração para conexão com o banco de dados
 db_config = { 
@@ -16,12 +16,12 @@ db_config = {
     'password': os.getenv('DATABASE_PASSWORD')
 }
 
-class DataService: # Classe responsável pela manipulação dos dados
+class DataService:
     def __init__(self):
-        self.db_repo = DbRepository(db_config) # Cria uma instância do repositório de dados e conecta com o banco de dados
+        self.db_repo = DbRepository(db_config)
         self.db_repo.connect()
 
-        logging.basicConfig(level=logging.DEBUG) # Configura o logger para debug
+        logging.basicConfig(level=logging.DEBUG)
         self.logger = logging.getLogger()
 
     def manipulate_data(self, filename): # Método para manipulação dos dados
@@ -42,7 +42,7 @@ class DataService: # Classe responsável pela manipulação dos dados
             df = df.applymap(lambda x: str(x).replace(',', '.') if isinstance(x, float) and not pd.isna(x) else x) # Troca vírgula por ponto em valores do tipo float e não nulo
             df = df.where(pd.notnull(df), None) # Substitui valores nulos por None em todas as colunas
             self.validate_cpf_cnpj(df) # Valida CPFs e CNPJs das linhas do dataframe
-            self.logger.debug(df) # Imprime o dataframe resultante no logger (debug)
+            self.logger.debug(df)
             return df
         except pd.errors.ParserError:
             raise ValueError('Error parsing file')
@@ -73,15 +73,15 @@ class DataService: # Classe responsável pela manipulação dos dados
         return '.' in filename and \
             filename.rsplit('.', 1)[1].lower() in {'txt', 'csv'}
 
-    def get_upload_folder(self): # Retorna o caminho da pasta em que o arquivo será salvo
+    def get_upload_folder(self):
         return './'
 
     def insert_data(self, df): 
         try:
-            self.db_repo.connect()  # Conexão com o banco de dados
-            self.db_repo.drop_table() # Drop da tabela no banco de dados caso a mesma já exista
-            self.db_repo.create_table()  # Criação da tabela no banco de dados
-            self.db_repo.insert_data(df) # Inserção dos dados do dataframe no banco
+            self.db_repo.connect()
+            self.db_repo.drop_table()
+            self.db_repo.create_table()
+            self.db_repo.insert_data(df)
             self.db_repo.commit() # Commit da transação
         except Exception as e:
             raise ValueError(str(e))

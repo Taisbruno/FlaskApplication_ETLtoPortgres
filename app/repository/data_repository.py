@@ -1,7 +1,7 @@
-import psycopg2 # Importação da biblioteca psycopg2 para interação com o PostgreSQL
+import psycopg2
 
 class DbRepository: 
-    def __init__(self, db_config): # Construtor da classe que recebe as configurações do banco de dados
+    def __init__(self, db_config): 
         self.db_config = db_config
         self.conn = None
         self.cursor = None
@@ -10,7 +10,7 @@ class DbRepository:
         self.conn = psycopg2.connect(**self.db_config)
         self.cursor = self.conn.cursor()
 
-    def create_table(self): # Método que cria a tabela no banco de dados
+    def create_table(self): # Método que cria a tabela no banco
         create_table_query = """
             CREATE TABLE IF NOT EXISTS clientes (
                 cpf VARCHAR PRIMARY KEY,
