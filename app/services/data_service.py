@@ -54,6 +54,7 @@ class DataService:
         df = df.drop_duplicates(subset=['cpf']) # Remove linhas duplicadas com base na coluna 'cpf'
         df = df.applymap(lambda x: str(x).lower() if isinstance(x, str) else x) # Converte para minúsculas
         df = df.applymap(lambda x: unidecode(str(x)) if isinstance(x, str) else x) # Substitui caracteres especiais
+        df[['loja da ultima compra', 'loja mais frequente']] = df[['loja da ultima compra', 'loja mais frequente']].replace('\D', '', regex=True) # Substitui não dígitos por uma string vazia em CNPJs
         df['cpf'] = df['cpf'].apply(lambda x: ''.join(filter(str.isdigit, str(x)))) # Formata a coluna 'cpf' para conter apenas dígitos
         df['data da ultima compra'] = pd.to_datetime(df['data da ultima compra']).dt.strftime('%Y-%m-%d') # Padroniza datas
         df = df.applymap(lambda x: str(x).replace(',', '.') if isinstance(x, float) and not pd.isna(x) else x) # Troca vírgula por ponto em valores do tipo float e não nulo

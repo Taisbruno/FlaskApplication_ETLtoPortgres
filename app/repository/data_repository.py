@@ -20,8 +20,8 @@ class DbRepository:
                 data_ultima_compra DATE,
                 ticket_medio FLOAT,
                 ticket_ultima_compra FLOAT,
-                loja_mais_frequente VARCHAR(18),
-                loja_ultima_compra VARCHAR(18)
+                loja_mais_frequente VARCHAR(14),
+                loja_ultima_compra VARCHAR(14)
             );
         """
         self.cursor.execute(create_table_query)
